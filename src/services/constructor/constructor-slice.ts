@@ -21,7 +21,7 @@ export const initialState: ConstructorState = {
 };
 
 export const constructorSlice = createSlice({
-  name: 'constructor',
+  name: 'myconstructor',
   initialState,
   reducers: {
     addIngredient: {

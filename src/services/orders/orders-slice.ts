@@ -19,6 +19,11 @@ export interface OrderState {
     isLoading: boolean;
     error: string | undefined;
   };
+  newOrder: {
+    order: TOrder | null;
+    name: string;
+  };
+  orderRequest: boolean;
 }
 
 const initialState: OrderState = {
@@ -38,13 +43,22 @@ const initialState: OrderState = {
     order: null,
     isLoading: false,
     error: undefined
-  }
+  },
+  newOrder: {
+    order: null,
+    name: ''
+  },
+  orderRequest: false
 };
 
 export const ordersSlice = createSlice({
   name: 'orders',
   initialState,
-  reducers: {}
+  reducers: {},
+  selectors: {
+    selectNewOrder: (state) => state.newOrder,
+    selectOrderRequest: (state) => state.orderRequest
+  }
 });
 
-export const ordersReducer = ordersSlice.reducer;
+export const { selectNewOrder, selectOrderRequest } = ordersSlice.selectors;

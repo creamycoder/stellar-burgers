@@ -18,115 +18,113 @@ import { ProtectedRoute } from '../protected-route/protected-route';
 
 const isAuth = false;
 
-const App = () => {
-  return (
-    <div className={styles.app}>
-      <AppHeader />
-      <Routes>
-        {/* Главная страница */}
-        <Route path='/' element={<ConstructorPage />} />
+const App = () => (
+  <div className={styles.app}>
+    <AppHeader />
+    <Routes>
+      {/* Главная страница */}
+      <Route path='/' element={<ConstructorPage />} />
 
-        {/* Лента */}
-        <Route path='/feed' element={<Feed />} />
+      {/* Лента */}
+      <Route path='/feed' element={<Feed />} />
 
-        {/* Гостевые роуты */}
-        <Route
-          path='/login'
-          element={
-            <ProtectedRoute isAuth>
-              <Login />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/register'
-          element={
-            <ProtectedRoute isAuth>
-              <Register />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/forgot-password'
-          element={
-            <ProtectedRoute isAuth>
-              <ForgotPassword />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/reset-password'
-          element={
-            <ProtectedRoute isAuth>
-              <ResetPassword />
-            </ProtectedRoute>
-          }
-        />
+      {/* Гостевые роуты */}
+      <Route
+        path='/login'
+        element={
+          <ProtectedRoute isAuth={isAuth}>
+            <Login />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path='/register'
+        element={
+          <ProtectedRoute isAuth={isAuth}>
+            <Register />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path='/forgot-password'
+        element={
+          <ProtectedRoute isAuth={isAuth}>
+            <ForgotPassword />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path='/reset-password'
+        element={
+          <ProtectedRoute isAuth={isAuth}>
+            <ResetPassword />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* Защищённые роуты */}
-        <Route
-          path='/profile'
-          element={
-            <ProtectedRoute isAuth>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/profile/orders'
-          element={
-            <ProtectedRoute isAuth>
-              <ProfileOrders />
-            </ProtectedRoute>
-          }
-        />
+      {/* Защищённые роуты */}
+      <Route
+        path='/profile'
+        element={
+          <ProtectedRoute isAuth={isAuth}>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path='/profile/orders'
+        element={
+          <ProtectedRoute isAuth={isAuth}>
+            <ProfileOrders />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* Ошибка 404 */}
-        <Route path='*' element={<NotFound404 />} />
+      {/* Ошибка 404 */}
+      <Route path='*' element={<NotFound404 />} />
 
-        {/* Модалки */}
-        <Route
-          path='/feed/:number'
-          element={
-            <Modal
-              title={''}
-              onClose={function (): void {
-                throw new Error('Function not implemented.');
-              }}
-            >
-              <OrderInfo />
-            </Modal>
-          }
-        />
-        <Route
-          path='/ingredients/:id'
-          element={
-            <Modal
-              title={''}
-              onClose={function (): void {
-                throw new Error('Function not implemented.');
-              }}
-            >
-              <IngredientDetails />
-            </Modal>
-          }
-        />
-        <Route
-          path='/profile/orders/:number'
-          element={
-            <Modal
-              title={''}
-              onClose={function (): void {
-                throw new Error('Function not implemented.');
-              }}
-            >
-              <OrderInfo />
-            </Modal>
-          }
-        />
-      </Routes>
-    </div>
-  );
-};
+      {/* Модалки */}
+      <Route
+        path='/feed/:number'
+        element={
+          <Modal
+            title={''}
+            onClose={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          >
+            <OrderInfo />
+          </Modal>
+        }
+      />
+      <Route
+        path='/ingredients/:id'
+        element={
+          <Modal
+            title={''}
+            onClose={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          >
+            <IngredientDetails />
+          </Modal>
+        }
+      />
+      <Route
+        path='/profile/orders/:number'
+        element={
+          <Modal
+            title={''}
+            onClose={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          >
+            <OrderInfo />
+          </Modal>
+        }
+      />
+    </Routes>
+  </div>
+);
 
 export default App;
