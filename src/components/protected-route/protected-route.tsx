@@ -16,15 +16,25 @@ export const ProtectedRoute = ({
   const user = useSelector(selectUser);
   const location = useLocation();
 
+  if (user) return children;
+
   if (!isAuthChecked) {
     return <Preloader />;
   }
 
-  if (!user) {
-    return <Navigate to='/login' replace state={{ from: location }} />;
-  }
-
-  return children;
+  return (
+    <Navigate
+      to='/login'
+      state={{
+        from: {
+          ...location,
+          background: location.state?.background,
+          state: null
+        }
+      }}
+      replace
+    />
+  );
 };
 
 export const UnAuthRoute = ({ children }: { children: React.ReactElement }) => {
