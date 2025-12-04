@@ -1,14 +1,14 @@
 import { useDispatch, useSelector } from '../../services/store';
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
-import { userSelector } from '../../services/user/user-slice';
 import { updateUserThunk } from '../../services/user/actions';
 import { TRegisterData } from '@api';
+import { selectUser } from '../../services/user/user-slice';
 
 export const Profile: FC = () => {
   /** TODO: взять переменную из стора */
   const dispatch = useDispatch();
-  const user = useSelector(userSelector);
+  const user = useSelector(selectUser);
   if (!user) return null;
 
   const [formValue, setFormValue] = useState<Partial<TRegisterData>>({

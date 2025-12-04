@@ -2,20 +2,12 @@ import { useState, useRef, useEffect, FC } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { TIngredient, TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
-import { useDispatch, useSelector } from '../../services/store';
-import { getIngredientsThunk } from '../../services/ingredients/actions';
+import { useSelector } from '../../services/store';
 import { selectIngredients } from '../../services/ingredients/ingredients-slice';
 
 export const BurgerIngredients: FC = () => {
   /** TODO: взять переменные из стора */
-  const dispatch = useDispatch();
   const ingredients: TIngredient[] = useSelector(selectIngredients);
-
-  useEffect(() => {
-    if (!ingredients.length) {
-      dispatch(getIngredientsThunk());
-    }
-  }, [dispatch, ingredients.length]);
 
   const buns = ingredients.filter((ing: TIngredient) => ing.type === 'bun');
   const mains = ingredients.filter((ing: TIngredient) => ing.type === 'main');

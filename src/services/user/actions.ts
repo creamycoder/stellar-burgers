@@ -1,11 +1,15 @@
 import {
+  getUserApi,
   loginUserApi,
+  logoutApi,
   registerUserApi,
   TLoginData,
   TRegisterData,
   updateUserApi
 } from '@api';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { getCookie } from '../../utils/cookie';
+import { setUser } from './user-slice';
 
 export const registerUserThunk = createAsyncThunk(
   'user/register',
@@ -42,4 +46,28 @@ export const updateUserThunk = createAsyncThunk(
       );
     }
   }
+);
+
+export const logoutUserThunk = createAsyncThunk(
+  'user/logout',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await logoutApi();
+    } catch (err: any) {
+      return rejectWithValue(err.message || 'Ошибка выхода из системы');
+    }
+  }
+);
+
+export const checkUserAuth = createAsyncThunk(
+  'user/checkUserAuth',
+  async (_, { dispatch }) => {
+    if (getCookie('accessToken')) {
+      getUserApi().then((user) => dispatch(setUser(user.user)));
+    }
+  }
+);
+
+export const setIsAuthChecked = createAction<boolean, 'user/setIsAuthChecked'>(
+  'user/setIsAuthChecked'
 );
