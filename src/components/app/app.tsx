@@ -24,8 +24,6 @@ import { TIngredient } from '@utils-types';
 import { selectIngredients } from '../../services/ingredients/ingredients-slice';
 import { getIngredientsThunk } from '../../services/ingredients/actions';
 
-const isAuth = false;
-
 const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -142,9 +140,11 @@ const App = () => {
           <Route
             path='/profile/orders/:number'
             element={
-              <Modal title={''} onClose={onCloseModal}>
-                <OrderInfo />
-              </Modal>
+              <ProtectedRoute>
+                <Modal title={''} onClose={onCloseModal}>
+                  <OrderInfo />
+                </Modal>
+              </ProtectedRoute>
             }
           />
         </Routes>

@@ -29,7 +29,7 @@ export const constructorSlice = createSlice({
         if (action.payload.type === 'bun') {
           state.burger.bun = action.payload;
         } else {
-          state.burger.ingredients.push(action.payload);
+          state.burger.ingredients.push({ ...action.payload, id: nanoid() });
         }
       },
       prepare: (ingredient: TIngredient) => {
@@ -47,7 +47,7 @@ export const constructorSlice = createSlice({
 
     removeIngredient(state, action) {
       state.burger.ingredients = state.burger.ingredients.filter(
-        (ing) => ing._id !== action.payload
+        (ing) => ing.id !== action.payload
       );
     },
 
