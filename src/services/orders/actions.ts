@@ -1,4 +1,4 @@
-import { getFeedsApi, getOrderByNumberApi } from '@api';
+import { getFeedsApi, getOrderByNumberApi, orderBurgerApi } from '@api';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const getFeedsThunk = createAsyncThunk(
@@ -19,6 +19,18 @@ export const getOrderByNumberThunk = createAsyncThunk(
       return await getOrderByNumberApi(orderNumber);
     } catch (err: any) {
       return rejectWithValue(err.message || 'Ошибка загрузки ленты заказов');
+    }
+  }
+);
+
+export const postUserBurderThunk = createAsyncThunk(
+  'order/postUserBurger',
+  async (userBurgerIngredients: string[], { rejectWithValue }) => {
+    try {
+      console.log('userBurgerIngredients=', userBurgerIngredients);
+      return await orderBurgerApi(userBurgerIngredients);
+    } catch (err: any) {
+      return rejectWithValue(err.message || 'Ошибка отправки заказа');
     }
   }
 );

@@ -3,40 +3,63 @@ import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import {
   selectNewOrder,
-  selectOrderRequest
+  selectOrderRequest,
+  setNewOrder
 } from '../../services/orders/orders-slice';
-import { useSelector, RootState } from '../../services/store';
+import { useSelector, RootState, useDispatch } from '../../services/store';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { postUserBurderThunk } from '../../services/orders/actions';
+import { selectBurgerConstructor } from '../../services/constructor/constructor-slice';
 
 export const BurgerConstructor: FC = () => {
   /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
-  const burgerItems = useSelector(
-    (state: RootState) => state.myconstructor.burger
-  );
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const userBurger = useSelector(selectBurgerConstructor);
   // ждем ответа сервера
   const orderRequest = useSelector(selectOrderRequest);
   // данные нового заказа
   const orderModalData = useSelector(selectNewOrder).order;
 
   const onOrderClick = () => {
-    if (!burgerItems.bun || orderRequest) return;
+    if (!userBurger.bun || orderRequest) {
+      return;
+    }
+    const from = { pathname: '/' };
+    const backgroundLocation = null;
+    const itemsId = [
+      userBurger.bun._id,
+      ...userBurger.ingredients.map((ingredient) => ingredient._id),
+      userBurger.bun._id
+    ];
+    dispatch(postUserBurderThunk(itemsId));
+    return navigate(from, {
+      replace: true,
+      state: { background: backgroundLocation }
+    });
   };
-  const closeOrderModal = () => {};
+
+  const closeOrderModal = () => {
+    dispatch(setNewOrder(false));
+  };
 
   const price = useMemo(
     () =>
-      (burgerItems.bun ? burgerItems.bun.price * 2 : 0) +
-      burgerItems.ingredients.reduce(
+      (userBurger.bun ? userBurger.bun.price * 2 : 0) +
+      userBurger.ingredients.reduce(
         (s: number, v: TConstructorIngredient) => s + v.price,
         0
       ),
-    [burgerItems]
+    [userBurger]
   );
 
   return (
     <BurgerConstructorUI
       price={price}
       orderRequest={orderRequest}
-      constructorItems={burgerItems}
+      constructorItems={userBurger}
       orderModalData={orderModalData}
       onOrderClick={onOrderClick}
       closeOrderModal={closeOrderModal}
