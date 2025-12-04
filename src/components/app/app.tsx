@@ -14,7 +14,10 @@ import styles from './app.module.css';
 
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { ProtectedRoute } from '../protected-route/protected-route';
+import {
+  ProtectedRoute,
+  UnAuthRoute
+} from '../protected-route/protected-route';
 
 const isAuth = false;
 
@@ -41,33 +44,33 @@ const App = () => {
         <Route
           path='/login'
           element={
-            <ProtectedRoute isAuth>
+            <UnAuthRoute>
               <Login />
-            </ProtectedRoute>
+            </UnAuthRoute>
           }
         />
         <Route
           path='/register'
           element={
-            <ProtectedRoute isAuth>
+            <UnAuthRoute>
               <Register />
-            </ProtectedRoute>
+            </UnAuthRoute>
           }
         />
         <Route
           path='/forgot-password'
           element={
-            <ProtectedRoute isAuth>
+            <UnAuthRoute>
               <ForgotPassword />
-            </ProtectedRoute>
+            </UnAuthRoute>
           }
         />
         <Route
           path='/reset-password'
           element={
-            <ProtectedRoute isAuth>
+            <UnAuthRoute>
               <ResetPassword />
-            </ProtectedRoute>
+            </UnAuthRoute>
           }
         />
 
@@ -75,7 +78,7 @@ const App = () => {
         <Route
           path='/profile'
           element={
-            <ProtectedRoute isAuth>
+            <ProtectedRoute>
               <Profile />
             </ProtectedRoute>
           }
@@ -83,43 +86,44 @@ const App = () => {
         <Route
           path='/profile/orders'
           element={
-            <ProtectedRoute isAuth>
+            <ProtectedRoute>
               <ProfileOrders />
             </ProtectedRoute>
           }
         />
       </Routes>
-      {backgroundLocation} && (
-      <Routes>
-        {/* Модалки */}
-        <Route
-          path='/feed/:number'
-          element={
-            <Modal title={''} onClose={onCloseModal}>
-              <OrderInfo />
-            </Modal>
-          }
-        />
-        <Route
-          path='/ingredients/:id'
-          element={
-            <Modal title={''} onClose={onCloseModal}>
-              <IngredientDetails />
-            </Modal>
-          }
-        />
-        <Route
-          path='/profile/orders/:number'
-          element={
-            <Modal title={''} onClose={onCloseModal}>
-              <OrderInfo />
-            </Modal>
-          }
-        />
-        {/* Ошибка 404 */}
-        <Route path='*' element={<NotFound404 />} />
-      </Routes>
-      );
+      {backgroundLocation && (
+        <Routes>
+          {/* Модалки */}
+          <Route
+            path='/feed/:number'
+            element={
+              <Modal title={''} onClose={onCloseModal}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+          <Route
+            path='/ingredients/:id'
+            element={
+              <Modal title={''} onClose={onCloseModal}>
+                <IngredientDetails />
+              </Modal>
+            }
+          />
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <Modal title={''} onClose={onCloseModal}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+          {/* Ошибка 404 */}
+          <Route path='*' element={<NotFound404 />} />
+        </Routes>
+      )}
+      ;
     </div>
   );
 };
