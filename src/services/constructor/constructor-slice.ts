@@ -29,7 +29,7 @@ export const constructorSlice = createSlice({
         if (action.payload.type === 'bun') {
           state.burger.bun = action.payload;
         } else {
-          state.burger.ingredients.push(action.payload);
+          state.burger.ingredients.push({ ...action.payload, id: nanoid() });
         }
       },
       prepare: (ingredient: TIngredient) => {
@@ -38,13 +38,20 @@ export const constructorSlice = createSlice({
       }
     },
 
-    removeIngredient(state, action: PayloadAction<string>) {
+    swapIngredient: (state, action) => {
+      const tmp = state.burger.ingredients[action.payload.first];
+      state.burger.ingredients[action.payload.first] =
+        state.burger.ingredients[action.payload.second];
+      state.burger.ingredients[action.payload.second] = tmp;
+    },
+
+    removeIngredient(state, action) {
       state.burger.ingredients = state.burger.ingredients.filter(
-        (ing) => ing._id !== action.payload
+        (ing) => ing.id !== action.payload
       );
     },
 
-    clearConstructor(state) {
+    clearBurger(state) {
       state.burger.bun = null;
       state.burger.ingredients = [];
     }
@@ -55,7 +62,7 @@ export const constructorSlice = createSlice({
 });
 export const { selectBurgerConstructor } = constructorSlice.selectors;
 
-export const { addIngredient, removeIngredient, clearConstructor } =
+export const { addIngredient, removeIngredient, clearBurger, swapIngredient } =
   constructorSlice.actions;
 
 export const constructorReducer = constructorSlice.reducer;

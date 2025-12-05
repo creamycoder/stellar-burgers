@@ -1,25 +1,52 @@
-import { FC, ReactElement } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
+import React from 'react';
+import { useSelector } from '../../services/store';
+import {
+  selectIsAuthChecked,
+  selectUser
+} from '../../services/user/user-slice';
+import { Preloader } from '@ui';
 
-interface IProtectedRouteProps {
-  children: ReactElement;
-  isAuth?: boolean;
-  guest?: boolean; // пока нету нормальной авторизации
-}
-
-export const ProtectedRoute: FC<IProtectedRouteProps> = ({
-  children,
-  isAuth,
-  guest = false
+export const ProtectedRoute = ({
+  children
+}: {
+  children: React.ReactElement;
 }) => {
-  // Защищённые страницы (profile)
-  if (!guest && !isAuth) {
-    return <Navigate to='/login' replace />;
+  const isAuthChecked = useSelector(selectIsAuthChecked);
+  const user = useSelector(selectUser);
+  const location = useLocation();
+
+  if (user) return children;
+
+  if (!isAuthChecked) {
+    return <Preloader />;
   }
 
-  // Гостевые страницы (login/register)
-  if (guest && isAuth) {
-    return <Navigate to='/' replace />;
-  }
-  return children;
+  return (
+    <Navigate
+      to='/login'
+      state={{
+        from: {
+          ...location,
+          background: location.state?.background,
+          state: null
+        }
+      }}
+      replace
+    />
+  );
+};
+
+export const UnAuthRoute = ({ children }: { children: React.ReactElement }) => {
+  const isAuthChecked = useSelector(selectIsAuthChecked);
+  const user = useSelector(selectUser);
+  const location = useLocation();
+  const backgroundLocation = location.state?.from?.background || null;
+  const from = location.state?.from || { pathname: '/' };
+
+  if (!isAuthChecked) return <Preloader />;
+  if (!user) return children;
+  return (
+    <Navigate replace to={from} state={{ background: backgroundLocation }} />
+  );
 };

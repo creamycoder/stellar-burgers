@@ -1,64 +1,135 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { TOrder } from '@utils-types';
+import {
+  getFeedsThunk,
+  getOrderByNumberThunk,
+  getUserOrdersThunk,
+  postUserBurderThunk
+} from './actions';
+import { TFeedsResponse } from '@api';
 
 export interface OrderState {
-  feed: {
-    total: number;
-    totalToday: number;
-    orders: TOrder[];
-    isLoading: boolean;
-    error: string | undefined;
-  };
-  userOrders: {
-    orders: TOrder[];
-    isLoading: boolean;
-    error: string | undefined;
-  };
-  orderByNumber: {
-    order: TOrder | null;
-    isLoading: boolean;
-    error: string | undefined;
-  };
+  feed: TFeedsResponse;
+  userOrders: TOrder[];
+  orderByNumber: TOrder | null;
   newOrder: {
     order: TOrder | null;
     name: string;
   };
   orderRequest: boolean;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: OrderState = {
   feed: {
+    success: false,
     total: 0,
     totalToday: 0,
-    orders: [],
-    isLoading: false,
-    error: undefined
+    orders: []
   },
-  userOrders: {
-    orders: [],
-    isLoading: false,
-    error: undefined
-  },
-  orderByNumber: {
-    order: null,
-    isLoading: false,
-    error: undefined
-  },
+  userOrders: [],
+  orderByNumber: null,
   newOrder: {
     order: null,
     name: ''
   },
-  orderRequest: false
+  orderRequest: false,
+  loading: false,
+  error: null
 };
 
 export const ordersSlice = createSlice({
   name: 'orders',
   initialState,
-  reducers: {},
+  reducers: {
+    setNewOrder: (state, action) => {
+      state.orderRequest = action.payload;
+      state.newOrder.order = null;
+    }
+  },
+  extraReducers: (builder) => {
+    builder
+      // feed
+      .addCase(getFeedsThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getFeedsThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.feed = action.payload;
+      })
+      .addCase(getFeedsThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      // order by number
+      .addCase(getOrderByNumberThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.orderByNumber = null;
+      })
+      .addCase(getOrderByNumberThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orderByNumber = action.payload.orders[0];
+      })
+      .addCase(getOrderByNumberThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // new user order
+      .addCase(postUserBurderThunk.pending, (state) => {
+        state.loading = true;
+        state.orderRequest = true;
+        state.error = null;
+      })
+      .addCase(postUserBurderThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orderRequest = false;
+        state.newOrder = {
+          order: action.payload.order,
+          name: action.payload.name
+        };
+      })
+      .addCase(postUserBurderThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.orderRequest = false;
+        state.error = action.payload as string;
+      })
+      // get users order
+      .addCase(getUserOrdersThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserOrdersThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userOrders = action.payload;
+      })
+      .addCase(getUserOrdersThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+  },
   selectors: {
+    selectFeedOrders: (state) => state.feed.orders,
+    selectOrdersLoading: (state) => state.loading,
+    selectOrderByNumber: (state) => state.orderByNumber,
+    selectFeed: (state) => state.feed,
     selectNewOrder: (state) => state.newOrder,
-    selectOrderRequest: (state) => state.orderRequest
+    selectOrderRequest: (state) => state.orderRequest,
+    selectUserOrders: (state) => state.userOrders
   }
 });
 
-export const { selectNewOrder, selectOrderRequest } = ordersSlice.selectors;
+export const {
+  selectFeedOrders,
+  selectOrdersLoading,
+  selectOrderByNumber,
+  selectFeed,
+  selectNewOrder,
+  selectOrderRequest,
+  selectUserOrders
+} = ordersSlice.selectors;
+
+export const { setNewOrder } = ordersSlice.actions;
